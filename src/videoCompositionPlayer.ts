@@ -112,9 +112,15 @@ export const useVideoCompositionPlayer = ({
   }, [isErrored, composition]);
 
   useEffect(() => {
-    runOnUI(() => {
-      framesExtractor?.prepare();
-    })();
+    if (!framesExtractor) return;
+  
+    const timeout = setTimeout(() => {
+      runOnUI(() => {
+        framesExtractor?.prepare();
+      })();
+    }, 550); // Delay nhẹ để Skia context chắc chắn được tạo
+  
+    return () => clearTimeout(timeout);
   }, [framesExtractor]);
 
   const currentFrame = useSharedValue<SkImage | null>(null);
